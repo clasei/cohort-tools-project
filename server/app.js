@@ -43,7 +43,7 @@ app.get("/docs", (req, res) => {
 });
 
 // --------------- ROUTES
-// --------------- STUDENTS
+// --------------- STUDENT
 
 // POST aka create new student
 app.post("/api/students", async (req, res) => {
@@ -62,34 +62,45 @@ app.post("/api/students", async (req, res) => {
     });
     res.status(201).json(response);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "error creating new student" });
   }
 });
 
 // GET all students
 app.get("/api/students", async (req, res) => {
   try {
-    const response = await Student.find();
+    // const response = await Student.find();
+    const response = await Student.find().populate("cohort"); // .populate will replace ObjectId with the cohort info
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({ message: "student ID not found" });
+    res.status(500).json({ message: "error fetching students" });
   }
 });
 
 // GET students from a specific cohort (by cohortId)
 app.get("/api/students/cohort/:cohortId", async (req, res) => {
   try {
-    const response = await Student.find({ cohort: req.params.cohortId }); // possible populate
+    const response = await Student.find({
+      cohort: req.params.cohortId,
+    }).populate("cohort"); // .populate
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "error fetching students by cohort" });
   }
 });
 
 // GET a specific student by id
 app.get("/api/students/:studentId", async (req, res) => {
   try {
-    const response = await Student.findById(req.params.studentId);
+    const response = await Student.findById(req.params.studentId).populate(
+      "cohort"
+    ); // .populate
+
+    // // possible 404
+    // if (!response) {
+    //   return res.status(404).json({ message: "student not found" });
+    // }
+
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: "error fetching student by id" });
@@ -123,7 +134,7 @@ app.put("/api/students/:studentId", async (req, res) => {
 });
 
 // DELETE a specific student by id
-app.delete("/api/students/:studentsId", async (req, res) => {
+app.delete("/api/students/:studentId", async (req, res) => {
   try {
     const response = await Student.findByIdAndDelete(req.params.studentId);
     res.status(204).json({ message: "Deleted student" });
@@ -132,8 +143,10 @@ app.delete("/api/students/:studentsId", async (req, res) => {
   }
 });
 
-// COHORT ROUTES
-//! POST aka create a new cohort
+// --------------- ROUTES
+// --------------- COHORT
+
+// POST aka create a new cohort
 app.post("/api/cohorts", async (req, res) => {
   try {
     const response = await Cohort.create({
@@ -171,6 +184,12 @@ app.get("/api/cohorts", async (req, res) => {
 app.get("/api/cohorts/:cohortId", async (req, res) => {
   try {
     const response = await Cohort.findById(req.params.cohortId);
+
+    // // possible 404 added
+    // if (!response) {
+    //   return res.status(404).json({ message: "cohort not found" });
+    // }
+
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ message: "error finding ID cohorts" });
