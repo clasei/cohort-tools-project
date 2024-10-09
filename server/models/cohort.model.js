@@ -5,9 +5,9 @@ const cohortSchema = new mongoose.Schema({
   cohortName: { type: String, required: true },
   program: {
     type: String,
-    enum: ["Web Dev", "UX/UI", "Data Analytics", "Cybersecurity"],
+    enum: [ "Web Dev", "UX/UI", "Data Analytics", "Cybersecurity" ],
   },
-  format: { type: String, enum: ["Full Time", "Part Time"] },
+  format: { type: String, enum: ["Full Time", "Part Time" ]},
   campus: {
     type: String,
     enum: [
@@ -29,6 +29,6 @@ const cohortSchema = new mongoose.Schema({
   totalHours: { type: Number, default: 360 },
 });
 
-const Cohort = mongoose.model("Cohort", cohortSchema);
+const Cohort = mongoose.model( "Cohort", cohortSchema );
 
 module.exports = Cohort;
